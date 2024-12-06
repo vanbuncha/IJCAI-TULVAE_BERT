@@ -4,14 +4,16 @@ Created on 2018.01.30
 @author: AI-World
 '''
 from __future__ import division
-import tensorflow as tf
-import numpy as np
-from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
-from tensorflow.python.layers.core import Dense
-from compiler.ast import flatten
-import matplotlib.pyplot as plt
 
 import math
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+from compiler.ast import flatten
+from tensorflow.python.layers.core import Dense
+from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
+
 #paramters
 batch_size=64 #you can choose 16,or ...
 iter_num=20
@@ -69,13 +71,13 @@ def extract_character_vocab(total_T):
     set_words = list(set(flatten(total_T)))
     set_words = sorted(set_words)
     set_words = [str(item) for item in set_words]
-    print len(set_words)
+    print (len(set_words))
     int_to_vocab = {idx: word for idx, word in enumerate(special_words + set_words)}
     vocab_to_int = {word: idx for idx, word in int_to_vocab.items()}
     return int_to_vocab, vocab_to_int
 
 def extract_words_vocab():
-    print 'dictionary length',len(voc_tra)
+    print ('dictionary length',len(voc_tra))
     int_to_vocab={idx: word for idx, word in enumerate(voc_tra)}
     vocab_to_int = {word: idx for idx, word in int_to_vocab.items()}
     return int_to_vocab, vocab_to_int
@@ -107,7 +109,7 @@ def getXs():  # =
             table_X['<PAD>']=X  #dictionary is a string  it is not a int type
         else:
             table_X[lineArr[0]] =X
-    print "point number item=", item
+    print ("point number item=", item)
     return table_X
 def readtraindata():
     test_T = list()
@@ -164,9 +166,9 @@ def readtraindata():
     pointT = temp_pointT
     userT = temp_userY
     total_T = pointT + test_T
-    print 'Total Numbers=', item - 1
-    print 'train trajectories number=', len(total_T)
-    print 'Train Size=', len(pointT), ' Test Size=', len(test_T), "User numbers=", len(User_List)
+    print ('Total Numbers=', item - 1)
+    print ('train trajectories number=', len(total_T))
+    print ('Train Size=', len(pointT), ' Test Size=', len(test_T), "User numbers=", len(User_List))
     return pointT, userT,test_T, test_UserT,User_List#
 #input
 getXs()
@@ -181,11 +183,11 @@ new_table_X['<EOS>']=table_X['<EOS>']
 new_table_X['<PAD>']=table_X['<PAD>']
 for keys in new_table_X:
     voc_tra.append(keys)
-print 'train trajectory size',len(pointT)
-print 'test trajectory size',len(test_T)
+print ('train trajectory size',len(pointT))
+print ('test trajectory size',len(test_T))
 
 int_to_vocab, vocab_to_int=extract_words_vocab()
-print 'POIs number is ',len(vocab_to_int)
+print ('POIs number is ',len(vocab_to_int))
 TOTAL_SIZE = len(vocab_to_int)
 
 #convert to int type
@@ -212,7 +214,7 @@ def dic_em():
         dic_embeddings.append(new_table_X[key])
     return dic_embeddings
 dic_embeddings=tf.constant(dic_em())
-print 'Dictionary Size',len(dic_em())
+print ('Dictionary Size',len(dic_em()))
 #------------------------------------------------------------------------------
 #classifer
 def classifer(encoder_embed_input,keep_prob=0.5,reuse=False):
@@ -348,7 +350,7 @@ def   train_model():
     with tf.Session() as sess:
         sess.run(initial)
         #saver.restore(sess, './model/gw_tulvae_112.pkt')
-        print'Read train & test data'
+        print('Read train & test data')
         initial_learning_rate = 0.00095
         learning_rate_len = 0.000008
         min_kl=0.0
@@ -512,12 +514,12 @@ def   train_model():
             TRAIN_F1.append(macro_F1)
             TRAIN_ACC1.append(acc / (step * batch_size))
             TRAIN_ACC5.append(acc5 / (step * batch_size))
-            print '\nTRAIN RESULT'
-            print 'macro-p', macro_P, 'macro-r', macro_R, 'macro-f1', macro_F1
-            print 'total train number', step * batch_size, 'learning rate', initial_learning_rate
-            print 'iter', epoch, 'Accuracy', acc / (step * batch_size), 'Accuracy5', acc5 / (
-            step * batch_size), 'TRAIN LOSS', train_cost
-            print '\nepoch TEST'
+            print ('\nTRAIN RESULT')
+            print ('macro-p', macro_P, 'macro-r', macro_R, 'macro-f1', macro_F1)
+            print ('total train number', step * batch_size, 'learning rate', initial_learning_rate)
+            print ('iter', epoch, 'Accuracy', acc / (step * batch_size), 'Accuracy5', acc5 / (
+            step * batch_size), 'TRAIN LOSS', train_cost)
+            print ('\nepoch TEST')
             TEST_p, TEST_r, TEST_f1, TEST_acc1, TEST_acc5 = test_model(sess, testT, testU, epoch)
             TEST_P.append(TEST_p)
             TEST_R.append(TEST_r)
@@ -590,9 +592,9 @@ def test_model(sess,testT,testU,epoch):
     macro_R = np.mean(R)
     macro_P = np.mean(P)
     macro_F1 = 2 * macro_P * macro_R / (macro_P + macro_R)
-    print 'macro-p', macro_P, 'macro-r', macro_R, 'macro-f1', macro_F1
-    print 'iter', epoch, 'Accuracy For TEST', acc / (step * batch_size), 'Accuracy5 For TEST', acc5 / (
-    step * batch_size), 'total test number', step * batch_size
+    print ('macro-p', macro_P, 'macro-r', macro_R, 'macro-f1', macro_F1)
+    print ('iter', epoch, 'Accuracy For TEST', acc / (step * batch_size), 'Accuracy5 For TEST', acc5 / (
+    step * batch_size), 'total test number', step * batch_size)
     return macro_P, macro_R, macro_F1, acc / (step * batch_size), acc5 / (step * batch_size)
 def save_metrics(LEARN_RATE,TRAIN_P,TRAIN_R,TRAIN_F1,TRAIN_ACC1,TRAIN_ACC5,root='out/gw_metric_tulvae.txt'):
     files=open(root,'w')
@@ -628,4 +630,4 @@ def draw_pic_metric(TEST_P,Test_R,Test_F1,Test_ACC1,TEST_ACC5,name='train'):
 
 if __name__ == "__main__":
     train_model()
-    print 'Model END'
+    print ('Model END')

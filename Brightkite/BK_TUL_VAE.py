@@ -4,14 +4,17 @@ Created on 2017.11.28
 @author: AI-World
 '''
 from __future__ import division
-import tensorflow as tf
-import numpy as np
-from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
-from tensorflow.python.layers.core import Dense
-from compiler.ast import flatten
-import matplotlib.pyplot as plt
-import os
+
 import math
+import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+from compiler.ast import flatten
+from tensorflow.python.layers.core import Dense
+from tensorflow.python.ops.rnn_cell_impl import LSTMStateTuple
+
 #paramters
 batch_size=64
 iter_num=30  #iter_number
@@ -69,13 +72,13 @@ def extract_character_vocab(total_T):
     set_words = list(set(flatten(total_T)))
     set_words = sorted(set_words)
     set_words = [str(item) for item in set_words]
-    print len(set_words)
+    print(len(set_words))
     int_to_vocab = {idx: word for idx, word in enumerate(special_words + set_words)}
     vocab_to_int = {word: idx for idx, word in int_to_vocab.items()}
     return int_to_vocab, vocab_to_int
 
 def extract_words_vocab():
-    print 'dictionary length',len(voc_tra)
+    print ('dictionary length',len(voc_tra))
     int_to_vocab={idx: word for idx, word in enumerate(voc_tra)}
     vocab_to_int = {word: idx for idx, word in int_to_vocab.items()}
     return int_to_vocab, vocab_to_int
@@ -106,7 +109,7 @@ def getXs():  # read POIs vector
             table_X['<PAD>']=X  #dictionary is a string  it is not a int type
         else:
             table_X[lineArr[0]] =X
-    print "point number item=", item
+    print ("point number item=", item)
     return table_X
 def readtraindata():
     test_T = list()
@@ -167,9 +170,9 @@ def readtraindata():
     seqlens = temp_seqlens
     total_T = pointT + test_T
     total_U = userT + test_UserT
-    print 'Total Numbers=', item - 1
-    print 'train trajectories number=', len(total_T)
-    print 'Train Size=', len(pointT), ' Test Size=', len(test_T), "User numbers=", len(User_List)
+    print ('Total Numbers=', item - 1)
+    print ('train trajectories number=', len(total_T))
+    print ('Train Size=', len(pointT), ' Test Size=', len(test_T), "User numbers=", len(User_List))
     return pointT, userT,test_T, test_UserT,User_List# 返回相关参数
 #input
 getXs()
@@ -184,11 +187,11 @@ new_table_X['<EOS>']=table_X['<EOS>']
 new_table_X['<PAD>']=table_X['<PAD>']
 for keys in new_table_X:
     voc_tra.append(keys)
-print 'train trajectory size',len(pointT)
-print 'test trajectory size',len(test_T)
+print ('train trajectory size',len(pointT))
+print ('test trajectory size',len(test_T))
 
 int_to_vocab, vocab_to_int=extract_words_vocab()
-print 'POIs number is ',len(vocab_to_int)
+print ('POIs number is ',len(vocab_to_int))
 TOTAL_SIZE = len(vocab_to_int)
 
 #convert to int type
@@ -216,7 +219,7 @@ def dic_em():
         dic_embeddings.append(new_table_X[key])
     return dic_embeddings
 dic_embeddings=tf.constant(dic_em())
-print 'Dictionary Size',len(dic_em())
+print ('Dictionary Size',len(dic_em()))
 #------------------------------------------------------------------------------
 #classifer
 def classifer(encoder_embed_input,keep_prob=0.5,reuse=False):
